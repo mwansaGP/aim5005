@@ -11,6 +11,7 @@ class MinMaxScaler:
         """
         Try to convert x to a np.ndarray if it'a not a np.ndarray and return. If it can't be cast raise an error
         """
+    
         if not isinstance(x, np.ndarray):
             x = np.array(x)
             
@@ -31,7 +32,11 @@ class MinMaxScaler:
         diff_max_min = self.maximum - self.minimum
         
         # TODO: There is a bug here... Look carefully! 
-        return x-self.minimum/(self.maximum-self.minimum)
+        #Old Code:
+        #return x-self.minimum/(self.maximum-self.minimum)
+
+        # SOLUTION:
+        return (x - self.minimum) / diff_max_min
     
     def fit_transform(self, x:list) -> np.ndarray:
         x = self._check_is_array(x)
@@ -42,4 +47,33 @@ class MinMaxScaler:
 class StandardScaler:
     def __init__(self):
         self.mean = None
-        raise NotImplementedError
+        self.std = None
+
+    def fit(self, x: np.ndarray):
+        """
+        Compute the mean and standard deviation for scaling.
+        """
+        if not isinstance(x, np.ndarray):
+            x = np.array(x)
+
+        self.mean = np.mean(x, axis=0)
+        self.std = np.std(x, axis=0, ddof=0)  # Using population standard deviation
+
+        # Prevent division by zero
+        self.std[self.std == 0] = 1  
+
+    def transform(self, x: np.ndarray) -> np.ndarray:
+        """
+        Scale the data to have zero mean and unit variance.
+        """
+        if self.mean is None or self.std is None:
+            raise ValueError("StandardScaler has not been fitted yet. Call 'fit' first.")
+
+        return (x - self.mean) / self.std
+
+    def fit_transform(self, x: np.ndarray) -> np.ndarray:
+        """
+        Fit to data, then transform it.
+        """
+        self.fit(x)
+        return self.transform(x)
