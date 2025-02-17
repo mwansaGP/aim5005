@@ -63,6 +63,15 @@ class TestFeatures(TestCase):
         assert (result == expected).all(), "Scaler transform does not return expected values. Expect {}. Got: {}".format(expected.reshape(1,-1), result.reshape(1,-1))
 
     # TODO: Add a test of your own below this line
+    #THIS TESTS THE ZERO VARIANCE CASE
+    def test_standard_scaler_zero_variance(self):
+        scaler = StandardScaler()
+        data = [[1, 1], [1, 1], [1, 1], [1, 1]]
+        expected = np.array([[0., 0.], [0., 0.], [0., 0.], [0., 0.]])
+        scaler.fit(data)
+        result = scaler.transform(data)
+        assert (result == expected).all(), "Scaler transform does not return expected values for zero variance data. Expect {}. Got: {}".format(expected.reshape(1,-1), result.reshape(1,-1))
+
     
 if __name__ == '__main__':
     unittest.main()
